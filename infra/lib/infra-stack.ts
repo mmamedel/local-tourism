@@ -12,7 +12,7 @@ import * as authorizers from "aws-cdk-lib/aws-apigatewayv2-authorizers";
 import * as budgets from "aws-cdk-lib/aws-budgets";
 import * as path from "node:path";
 
-const BUDGET_EMAIL = "mateus.lage@dewdrops.ai";
+const BUDGET_EMAIL = "mmamedel@gmail.com";
 const BUDGET_USD = 10;
 
 export class LocalTourismStack extends cdk.Stack {
