@@ -71,20 +71,7 @@ export class LocalTourismStack extends cdk.Stack {
     const fn = new lambda.Function(this, "PackagesFn", {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: "index.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "..", "lambda", "packages"), {
-        bundling: {
-          image: lambda.Runtime.NODEJS_20_X.bundlingImage,
-          command: [
-            "bash",
-            "-c",
-            [
-              "cp -r /asset-input/* /asset-output/",
-              "cd /asset-output",
-              "npm install --omit=dev @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb @aws-sdk/client-s3 @aws-sdk/s3-request-presigner",
-            ].join(" && "),
-          ],
-        },
-      }),
+      code: lambda.Code.fromAsset(path.join(__dirname, "..", "lambda", "packages")),
       environment: {
         TABLE_NAME: table.tableName,
         IMAGES_BUCKET: imagesBucket.bucketName,
