@@ -24,7 +24,7 @@ export function Banner({ packages }: { packages: Package[] }) {
   if (featured.length === 0) return null;
 
   return (
-    <section className="relative w-full aspect-[21/9] md:aspect-[21/8] overflow-hidden bg-neutral-900">
+    <section className="relative w-full aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/8] overflow-hidden bg-neutral-900">
       {featured.map((p, i) => (
         <Link
           key={p.id}
@@ -44,7 +44,7 @@ export function Banner({ packages }: { packages: Package[] }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 text-white max-w-3xl">
             <h2 className="text-3xl md:text-5xl font-semibold drop-shadow">{p.title}</h2>
-            <p className="mt-2 md:mt-4 text-base md:text-lg text-white/90 drop-shadow line-clamp-2">
+            <p className="mt-2 md:mt-4 text-base md:text-lg text-white/90 drop-shadow line-clamp-3">
               {p.headline}
             </p>
           </div>
