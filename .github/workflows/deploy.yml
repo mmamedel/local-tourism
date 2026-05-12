@@ -42,7 +42,7 @@ jobs:
 
       - name: CDK deploy
         working-directory: infra
-        run: npx cdk deploy --require-approval never --outputs-file cdk-outputs.json
+        run: npx cdk deploy LocalTourismStack --require-approval never --outputs-file cdk-outputs.json
 
       - name: Read stack outputs
         id: outputs
