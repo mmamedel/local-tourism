@@ -12,7 +12,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     const t = loadTokens();
-    if (!isValid(t) && pathname !== "/admin/login") {
+    if (!isValid(t) && !pathname.startsWith("/admin/login")) {
       router.replace("/admin/login/");
     } else {
       setReady(true);
@@ -27,7 +27,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <Link href="/admin/" className="font-semibold">
           Admin · Turismo Local
         </Link>
-        {pathname !== "/admin/login" && (
+        {!pathname.startsWith("/admin/login") && (
           <button
             type="button"
             onClick={() => {
