@@ -1,0 +1,19 @@
+node_modules/
+.DS_Store
+*.log
+
+# Next.js
+web/.next/
+web/out/
+web/.env*.local
+
+# CDK
+infra/cdk.out/
+infra/cdk-outputs.json
+infra/*.js
+infra/*.d.ts
+!infra/jest.config.js
+
+# Editor
+.idea/
+.vscode/

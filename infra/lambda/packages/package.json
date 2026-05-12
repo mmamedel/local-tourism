@@ -1,0 +1,7 @@
+{
+  "name": "packages-handler",
+  "version": "0.0.0",
+  "type": "commonjs",
+  "main": "index.js",
+  "dependencies": {}
+}
