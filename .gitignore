@@ -10,6 +10,7 @@ web/.env*.local
 # CDK
 infra/cdk.out/
 infra/cdk-outputs.json
+infra/oidc-outputs.json
 infra/*.js
 infra/*.d.ts
 !infra/jest.config.js

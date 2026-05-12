@@ -1,5 +1,0 @@
-{
-  "GitHubOidcStack": {
-    "RoleArn": "arn:aws:iam::886032756654:role/github-actions-local-tourism-deploy"
-  }
-}
