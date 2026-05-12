@@ -143,12 +143,29 @@ export class LocalTourismStack extends cdk.Stack {
     // ---------- CloudFront ----------
     // /images/* path is rewritten to strip the prefix before hitting S3,
     // so uploaded keys can live at the bucket root.
-    const rewriteFn = new cloudfront.Function(this, "ImagePathRewrite", {
+    const imageRewriteFn = new cloudfront.Function(this, "ImagePathRewrite", {
       code: cloudfront.FunctionCode.fromInline(`
 function handler(event) {
   var req = event.request;
   if (req.uri.indexOf('/images/') === 0) {
     req.uri = req.uri.substring('/images'.length);
+  }
+  return req;
+}
+`),
+    });
+
+    // Resolve directory paths to /index.html (S3 OAC doesn't do this automatically
+    // like S3 website hosting does).
+    const indexRewriteFn = new cloudfront.Function(this, "IndexRewrite", {
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var req = event.request;
+  var uri = req.uri;
+  if (uri.endsWith('/')) {
+    req.uri = uri + 'index.html';
+  } else if (!uri.includes('.')) {
+    req.uri = uri + '/index.html';
   }
   return req;
 }
@@ -162,6 +179,9 @@ function handler(event) {
         origin: origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        functionAssociations: [
+          { eventType: cloudfront.FunctionEventType.VIEWER_REQUEST, function: indexRewriteFn },
+        ],
       },
       additionalBehaviors: {
         "/images/*": {
@@ -169,7 +189,7 @@ function handler(event) {
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
           functionAssociations: [
-            { eventType: cloudfront.FunctionEventType.VIEWER_REQUEST, function: rewriteFn },
+            { eventType: cloudfront.FunctionEventType.VIEWER_REQUEST, function: imageRewriteFn },
           ],
         },
       },
