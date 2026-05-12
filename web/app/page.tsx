@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { listPackages, imageUrl } from "@/lib/api";
 import type { Package } from "@/lib/config";
+import { Banner } from "@/components/Banner";
 
 export default function HomePage() {
   const [packages, setPackages] = useState<Package[] | null>(null);
@@ -11,9 +12,11 @@ export default function HomePage() {
 
   useEffect(() => {
     listPackages()
-      .then((data) => setPackages(data.filter((p) => p.published)))
+      .then((data) => setPackages(data))
       .catch((e) => setError(String(e)));
   }, []);
+
+  const published = packages?.filter((p) => p.published) ?? [];
 
   return (
     <>
@@ -24,15 +27,17 @@ export default function HomePage() {
         </p>
       </header>
 
+      {packages && <Banner packages={packages} />}
+
       <main className="flex-1 px-6 py-10 max-w-6xl mx-auto w-full">
         {error && <p className="text-red-600">Erro ao carregar pacotes: {error}</p>}
         {!packages && !error && <p className="text-neutral-500">Carregando…</p>}
-        {packages && packages.length === 0 && (
+        {packages && published.length === 0 && (
           <p className="text-neutral-500">Nenhum pacote publicado ainda.</p>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {packages?.map((p) => (
+          {published.map((p) => (
             <Link
               key={p.id}
               href={`/pacotes/?slug=${encodeURIComponent(p.slug)}`}

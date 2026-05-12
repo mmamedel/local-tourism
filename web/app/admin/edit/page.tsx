@@ -229,6 +229,30 @@ function EditForm() {
         <span>Publicado</span>
       </label>
 
+      <div className="flex items-center gap-4">
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={!!pkg.featured}
+            onChange={(e) => setPkg({ ...pkg, featured: e.target.checked })}
+          />
+          <span>Destaque no banner (até 3)</span>
+        </label>
+        {pkg.featured && (
+          <label className="flex items-center gap-2 text-sm">
+            <span>Ordem:</span>
+            <input
+              type="number"
+              min={1}
+              max={3}
+              value={pkg.featuredOrder ?? 1}
+              onChange={(e) => setPkg({ ...pkg, featuredOrder: Number(e.target.value) })}
+              className="w-16 border border-neutral-300 rounded px-2 py-1"
+            />
+          </label>
+        )}
+      </div>
+
       {error && <p className="text-red-600 text-sm">{error}</p>}
 
       <div className="flex gap-3">

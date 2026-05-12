@@ -20,5 +20,7 @@ export type Package = {
   heroImageKey?: string;
   galleryKeys?: string[];
   published: boolean;
+  featured?: boolean;
+  featuredOrder?: number;
   updatedAt: string;
 };
