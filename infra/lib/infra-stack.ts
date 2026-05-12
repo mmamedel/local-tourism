@@ -9,7 +9,11 @@ import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as apigw from "aws-cdk-lib/aws-apigatewayv2";
 import * as integrations from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import * as authorizers from "aws-cdk-lib/aws-apigatewayv2-authorizers";
+import * as budgets from "aws-cdk-lib/aws-budgets";
 import * as path from "node:path";
+
+const BUDGET_EMAIL = "mateus.lage@dewdrops.ai";
+const BUDGET_USD = 10;
 
 export class LocalTourismStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -97,6 +101,14 @@ export class LocalTourismStack extends cdk.Stack {
         allowHeaders: ["content-type", "authorization"],
       },
     });
+
+    // Throttle the default stage: 25 sustained req/sec, 50 burst — fine for a
+    // low-traffic brochure site, brutal for anyone hammering.
+    const defaultStage = httpApi.defaultStage?.node.defaultChild as apigw.CfnStage;
+    defaultStage.defaultRouteSettings = {
+      throttlingRateLimit: 25,
+      throttlingBurstLimit: 50,
+    };
 
     const integration = new integrations.HttpLambdaIntegration("PackagesInt", fn);
 
@@ -196,6 +208,36 @@ function handler(event) {
       errorResponses: [
         { httpStatus: 403, responseHttpStatus: 404, responsePagePath: "/404.html" },
         { httpStatus: 404, responseHttpStatus: 404, responsePagePath: "/404.html" },
+      ],
+    });
+
+    // ---------- Budget ----------
+    new budgets.CfnBudget(this, "MonthlyBudget", {
+      budget: {
+        budgetName: "local-tourism-monthly",
+        budgetType: "COST",
+        timeUnit: "MONTHLY",
+        budgetLimit: { amount: BUDGET_USD, unit: "USD" },
+      },
+      notificationsWithSubscribers: [
+        {
+          notification: {
+            notificationType: "ACTUAL",
+            comparisonOperator: "GREATER_THAN",
+            threshold: 80,
+            thresholdType: "PERCENTAGE",
+          },
+          subscribers: [{ subscriptionType: "EMAIL", address: BUDGET_EMAIL }],
+        },
+        {
+          notification: {
+            notificationType: "FORECASTED",
+            comparisonOperator: "GREATER_THAN",
+            threshold: 100,
+            thresholdType: "PERCENTAGE",
+          },
+          subscribers: [{ subscriptionType: "EMAIL", address: BUDGET_EMAIL }],
+        },
       ],
     });
 
